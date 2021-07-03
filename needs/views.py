@@ -11,6 +11,11 @@ def main_page(request):
         form = AddItem(request.POST or None)
         if form.is_valid():
             new_item = Item(description=form.cleaned_data.get("item_name"), author=request.user)
+            def check_slash(string):
+                first_slash = string.find('/')
+                last_slash = string.rfind('/')
+                return [first_slash+1:last_slash]
+            out_put = check_slash(form.cleaned_data.get("item_name"))
             try:
                 new_item.save()
             except Exception as e:
@@ -19,7 +24,8 @@ def main_page(request):
             "items": Item.objects.all(),
             "user": request.user,
             "form": form,
-            "errors": errors
+            "errors": errors,
+            "out_put": out_put,
         }
         return render(request, 'index.html', context)
     else:
